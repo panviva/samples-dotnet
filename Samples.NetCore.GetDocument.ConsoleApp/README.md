@@ -15,6 +15,7 @@ A simple .Net Core Console App to show how to get the metadata and content of a 
 ## Running the Application
 
 ```bash
-# Assuming you've installed .net runtime SDKs in your environment
+# Assuming you've installed .net runtime SDKs in your environment and you are in correct directory
+# run this command in bash
 dotnet run
 ```
