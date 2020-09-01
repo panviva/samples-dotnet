@@ -14,7 +14,8 @@ A simple .Net Core API to show how to get and combine the metadata and content o
 ## Running the Application
 
 ```bash
-# Assuming you've installed .net runtime SDKs in your environment
+# Assuming you've installed .net runtime SDKs in your environment and you are in correct directory
+# run this command in bash
 dotnet run
 ```
 
