@@ -8,7 +8,7 @@ using Panviva.Sdk.Services.Core.Domain.QueryModels.V3;
 using Panviva.Sdk.Services.Core.Exceptions;
 using Panviva.Sdk.Services.Core.Handlers.V3;
 
-namespace Samples.NetCore.GetDocument.Direct.Api.Controllers
+namespace Sample.NetCore.Wrapper.Api.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
