@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Panviva.Sdk.Services.Core.Exceptions;
 using Panviva.Sdk.Services.Core.Extensions.V3;
 
 namespace Sample.NetCore.Wrapper.Api
@@ -21,6 +22,8 @@ namespace Sample.NetCore.Wrapper.Api
         {
             services.AddControllers();
             services.AddPanvivaApis();
+            // Register the Swagger generator, defining 1 or more Swagger documents
+            services.AddSwaggerGen();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -30,9 +33,22 @@ namespace Sample.NetCore.Wrapper.Api
 
             app.UseHttpsRedirection();
 
+            // Enable middleware to serve generated Swagger as a JSON endpoint.
+            app.UseSwagger();
+
+            // Enable middleware to serve swagger-ui (HTML, JS, CSS, etc.),
+            // specifying the Swagger JSON endpoint.
+            app.UseSwaggerUI(c =>
+            {
+                c.SwaggerEndpoint("/swagger/v1/swagger.json", "Panviva Controller");
+            });
+
+
             app.UseRouting();
 
             app.UseAuthorization();
+
+            app.UsePanvivaExceptionMiddleware();
 
             app.UseEndpoints(endpoints => { endpoints.MapControllers(); });
         }

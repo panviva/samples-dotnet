@@ -33,5 +33,11 @@ dotnet run
 ```
 
 ## Using the Application
-Go to url : https://localhost:5001/api/panviva/{Routes}
-> Example : https://localhost:5001/api/panviva/search/*
+
+Explore APIs via Swagger at [https://localhost:5001/swagger](https://localhost:5001/swagger)
+
+![Panviva Controller](documentation/swagger.png)
+
+or Go to url : https://localhost:5001/api/panviva/{Routes}
+
+> Example : https://localhost:5001/api/panviva/search/\*
