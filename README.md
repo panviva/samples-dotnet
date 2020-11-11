@@ -1,11 +1,12 @@
 # .Net Samples
-These samples allow you to push your knowledge further and consume a complete list of Panviva's API offerings using [Panviva's DotNet Toolkit](https://www.nuget.org/packages/Panviva.Sdk.Services.Core/). 
+
+These samples allow you to push your knowledge further and consume a complete list of Panviva's API offerings using [Panviva's DotNet Toolkit](https://www.nuget.org/packages/Panviva.Sdk.Services.Core/).
 
 The samples below will consume:
 
-`Content APIs` perform resource related operations , e.g. document, folder, file, container, image. 
+`Content APIs` perform resource related operations , e.g. document, folder, file, container, image.
 
-`Live APIs` enable real-time communications with online users on our client application. 
+`Live APIs` enable real-time communications with online users on our client application.
 
 `Artefact APIs` interact with curated Panviva content, created by the Digital Orchestrator.
 
@@ -39,12 +40,23 @@ To get your instance name you must:
 
 - ASP.Net Core Runtime sdk 3.1 or grater
 
+### Configure your Sample
+
+Use your Panviva credentials from the aforementioned steps & configure your samples to use them like so:
+
+1. Your `BaseUrl` should be `https://api.panviva.com`
+1. Set `Instance` to the `instance name` gathered in the aforementioned steps
+1. Set `ApiKey` to the `API key` gathered in the aforementioned steps
+1. Set `RetryCount` to a value that works for you. Eg. `"RetryCount": "3"`
+
+![api settings](documentation/api-settings.PNG)
+
 ## Samples
 
-| # | Sample Name | Description  | API Type | Link |
-| - | ----------- | ------------ | -------- | ---- |
-| 1. | GetDocument.Direct.Api | A simple .Net Core API to show how to get and combine the metadata and content of a document from Panviva's APIs, utilizing `GET Document` , `GET Document Containers` and `GET Document Translations` | Content APIs | [LINK](Samples.NetCore.GetDocument.Direct.Api/README.md) |
-| 2. | GetDocument.ConsoleApp | A simple .Net Core Console App to show how to get the metadata and content of a document from Panviva's APIs, utilizing `GET Document` and `GET Document Containers` | Content APIs | [LINK](Samples.NetCore.GetDocument.ConsoleApp/README.md) |
-| 3. | GetDocument.AsPlainText.ConsoleApp | A simple .Net Core Console App to show how to get the metadata and content of a document from Panviva's APIs, utilizing `GET Document` and `GET Document Containers` as plain-text | Content APIs | [LINK](Samples.NetCore.GetDocument.AsPlainText.ConsoleApp/README.md) |
-| 4. | GetDocument.Updated.ConsoleApp | A simple .Net Core Console App to show how to get a list of documents recently updated from Panviva's APIs, utilizing `GET Search` | Content APIs | [LINK](Samples.NetCore.GetDocument.Updated.ConsoleApp/README.md) |
-| 5. | Wrapper.Api | A simple .Net Core API to show how to use Panviva .Net SDK to `GET` and `POST` content to Panviva's APIs, Utilizing number of Panviva API endpoints | Content APIs, Live APIs, Artefact APIs | [LINK](Sample.NetCore.Wrapper.Api/README.md) |
+| #   | Sample Name                        | Description                                                                                                                                                                                            | API Type                               | Link                                                                 |
+| --- | ---------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | -------------------------------------- | -------------------------------------------------------------------- |
+| 1.  | GetDocument.Direct.Api             | A simple .Net Core API to show how to get and combine the metadata and content of a document from Panviva's APIs, utilizing `GET Document` , `GET Document Containers` and `GET Document Translations` | Content APIs                           | [LINK](Samples.NetCore.GetDocument.Direct.Api/README.md)             |
+| 2.  | GetDocument.ConsoleApp             | A simple .Net Core Console App to show how to get the metadata and content of a document from Panviva's APIs, utilizing `GET Document` and `GET Document Containers`                                   | Content APIs                           | [LINK](Samples.NetCore.GetDocument.ConsoleApp/README.md)             |
+| 3.  | GetDocument.AsPlainText.ConsoleApp | A simple .Net Core Console App to show how to get the metadata and content of a document from Panviva's APIs, utilizing `GET Document` and `GET Document Containers` as plain-text                     | Content APIs                           | [LINK](Samples.NetCore.GetDocument.AsPlainText.ConsoleApp/README.md) |
+| 4.  | GetDocument.Updated.ConsoleApp     | A simple .Net Core Console App to show how to get a list of documents recently updated from Panviva's APIs, utilizing `GET Search`                                                                     | Content APIs                           | [LINK](Samples.NetCore.GetDocument.Updated.ConsoleApp/README.md)     |
+| 5.  | Wrapper.Api                        | A simple .Net Core API to show how to use Panviva .Net SDK to `GET` and `POST` content to Panviva's APIs, Utilizing number of Panviva API endpoints                                                    | Content APIs, Live APIs, Artefact APIs | [LINK](Sample.NetCore.Wrapper.Api/README.md)                         |
