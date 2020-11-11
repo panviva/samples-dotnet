@@ -36,7 +36,7 @@ dotnet run
 
 Explore APIs via Swagger at [https://localhost:5001/swagger](https://localhost:5001/swagger)
 
-![Panviva Controller](documentation/swagger.png)
+![Panviva Controller](documentation/swagger.PNG)
 
 or Go to url : https://localhost:5001/api/panviva/{Routes}
 
