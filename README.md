@@ -49,7 +49,7 @@ Use your Panviva credentials from the aforementioned steps & configure your samp
 1. Set `ApiKey` to the `API key` gathered in the aforementioned steps
 1. Set `RetryCount` to a value that works for you. Eg. `"RetryCount": "3"`
 
-![api settings](documentation/api-settings.PNG)
+![api settings](documentation/api-settings.png)
 
 ## Samples
 
