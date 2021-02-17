@@ -11,6 +11,8 @@ namespace Samples.NetCore.GetDocument.Direct.Api.Models
 
         [JsonProperty("Translations")] public IList<Document> Translations { get; set; }
 
+        [JsonProperty("Relationships")] public IList<ContainerRelationship> Relationships { get; set; }
+
         [JsonProperty("Origin")] public string Origin { get; set; }
     }
 }
