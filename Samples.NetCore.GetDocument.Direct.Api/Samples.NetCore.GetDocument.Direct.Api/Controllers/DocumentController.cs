@@ -41,7 +41,13 @@ namespace Samples.NetCore.GetDocument.Direct.Api.Controllers
                 Id = id
             };
 
+            var getDocumentContainerRelationshipsQueryModel = new GetDocumentContainerRelationshipsQueryModel
+            {
+                Id = id
+            };
+
             var getContainersTask = _queryHandler.HandleAsync(getDocumentContainersQueryModel);
+            var getContainerRelationships = _queryHandler.HandleAsync(getDocumentContainerRelationshipsQueryModel);
             var getTranslationsTask = _queryHandler.HandleAsync(getDocumentTranslationsQueryModel);
 
             GetDocumentResultModel mainDocument;
@@ -49,7 +55,7 @@ namespace Samples.NetCore.GetDocument.Direct.Api.Controllers
             {
                 // Execute calls to Panviva through SDK. 
                 mainDocument = await _queryHandler.HandleAsync(getDocumentQueryModel);
-                Task.WaitAll(getTranslationsTask, getContainersTask);
+                Task.WaitAll(getTranslationsTask, getContainerRelationships, getContainersTask);
             }
             catch (QueryModelException ex)
             {
@@ -68,6 +74,7 @@ namespace Samples.NetCore.GetDocument.Direct.Api.Controllers
             finalResult.Containers = getContainersTask.Result.Containers;
             finalResult.Translations = getTranslationsTask.Result.Translations;
             finalResult.Origin = getTranslationsTask.Result.Origin;
+            finalResult.Relationships = getContainerRelationships.Result.Relationships;
 
             return finalResult;
         }
