@@ -31,7 +31,7 @@ namespace Samples.Net.Web.Controllers
 
         [HttpGet]
         [Route("search/{term}")]
-        public async Task<IActionResult> SearchAsync(string term)
+        public async Task<IActionResult> SearchAsync(string term = "*")
         {
             var queryModel = new GetSearchQueryModel
             {
@@ -175,6 +175,38 @@ namespace Samples.Net.Web.Controllers
             return File(
                 Convert.FromBase64String(resultModel.Content),
                 resultModel.ContentType
+            );
+        }
+
+        [HttpGet]
+        [Route("file/{id}")]
+        [ResponseCache(VaryByHeader = "User-Agent", Duration = 30)]
+        public async Task<IActionResult> GetFileAsync(int id)
+        {
+            var queryModel = new GetFileQueryModel
+            {
+                Id = id.ToString()
+            };
+            GetFileResultModel resultModel;
+            try
+            {
+                resultModel = await _queryHandler.HandleAsync(queryModel);
+            }
+            catch (QueryModelException ex)
+            {
+                // When Query model validation fails.
+                _logger.LogError(ex.Message, ex);
+                throw;
+            }
+            catch (FailedApiRequestException ex)
+            {
+                // When Panviva API results in a error.
+                _logger.LogError(ex.Message, ex);
+                throw;
+            }
+
+            return File(
+                Convert.FromBase64String(resultModel.Content), "application/octet-stream",resultModel.FileName
             );
         }
 

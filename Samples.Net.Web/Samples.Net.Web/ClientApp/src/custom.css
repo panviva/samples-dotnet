@@ -12,3 +12,17 @@ code {
   background-color: #1b6ec2;
   border-color: #1861ac;
 }
+
+.form-control:focus {
+  box-shadow: none;
+}
+
+.hidden {
+  display: none !important;
+}
+
+.search-results-list-item:hover{
+  padding-left: 20px !important;
+  border-color: #c21b6e;
+  margin-left: 10px !important;
+}
