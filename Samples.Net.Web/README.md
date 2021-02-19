@@ -2,14 +2,14 @@
 
 A simple `.Net 5` and `React` Web Application that allows you to search and display panviva documents.
 
-Following Endpoints are used in this sample wrapper API.
+Following Endpoints are exposed via APIs.
 
 - `GET Search`
 - `GET Search Artefacts`
 - `GET Document Containers`
 - `GET Document Containers Relationships`
 - `GET Image`
-
+- `GET File`
 - `POST Live CSH`
 - `POST Live Search`
 - `POST Live Document`
@@ -35,6 +35,10 @@ dotnet run
 ## Using the Application
 
 You should be able to interact with the application at [https://localhost:25001/](https://localhost:25001/)
+
+![Panviva Home Page](documentation/home-page.png)
+
+![Panviva Search Results Loading](documentation/search-loading.png)
 
 ![Panviva Search Results](documentation/search-results.png)
 
