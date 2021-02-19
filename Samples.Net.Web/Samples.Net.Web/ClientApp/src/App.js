@@ -2,7 +2,7 @@ import React, { Component } from "react";
 import { Route } from "react-router";
 import { Layout } from "./components/Layout";
 import { Home } from "./components/Home";
-import Document from "./components/Document";
+import Document from "./components/document/Document";
 import { Search } from "./components/search/Search";
 
 import "./custom.css";
