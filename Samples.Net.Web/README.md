@@ -38,7 +38,7 @@ You should be able to interact with the application at [https://localhost:25001/
 
 ![Panviva Home Page](documentation/home-page.png)
 
-![Panviva Search Results Loading](documentation/search-loading.png)
+![Panviva Search Results Loading](documentation/search-results-loading.png)
 
 ![Panviva Search Results](documentation/search-results.png)
 
