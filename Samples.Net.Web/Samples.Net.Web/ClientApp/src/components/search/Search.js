@@ -5,7 +5,7 @@ import { SearchResults } from "./SearchResults";
 
 export const Search = () => {
   const history = useHistory();
-  const [params, setParams] = useState(useParams());
+  const [params] = useState(useParams());
   const [title, setTitle] = useState("");
   const [pendingQuery, setPendingQuery] = useState("");
   const [searchQuery, setSearchQuery] = useState(
@@ -37,10 +37,21 @@ export const Search = () => {
     try {
       const response = await fetch(url);
       const data = await response.json();
-      setSearchResults(data);
+      if (response.status !== 200) {
+        let errorMessage = `${data.message}`;
+        let path = `/error/${response.status}/${errorMessage}`;
+        console.error(errorMessage);
+        history.push(path);
+      } else {
+        setSearchResults(data);
+      }
       setLoading(false);
     } catch (error) {
-      console.log(`error when fetching ${url}`, error);
+      let errorMessage = JSON.stringify(error);
+      let path = `/error/unknown/${errorMessage}`;
+      console.error(errorMessage);
+      console.error(errorMessage);
+      history.push(path);
     }
   };
 

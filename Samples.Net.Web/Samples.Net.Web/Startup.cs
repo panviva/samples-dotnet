@@ -6,6 +6,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Panviva.Sdk.Services.Core.Extensions.V3;
+using Samples.Net.Web.Utilities;
 
 namespace Samples.Net.Web
 {
@@ -22,7 +23,7 @@ namespace Samples.Net.Web
         public void ConfigureServices(IServiceCollection services)
         {
 
-            services.AddControllersWithViews();
+            services.AddControllersWithViews(options => options.Filters.Add(new HttpResponseExceptionFilter()));
 
             // In production, the React files will be served from this directory
             services.AddSpaStaticFiles(configuration =>
