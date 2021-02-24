@@ -1,10 +1,9 @@
 import React, { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
-import Moment from "react-moment";
-import { Input, Spinner } from "reactstrap";
+import { Spinner } from "reactstrap";
+import { DocumentSection } from "./DocumentSection";
 
-const Document = () => {
-  const [isDebugEnabled, setDebugEnabledStatus] = useState(false);
+export const Document = () => {
   // Set document placeholder
   const [panvivaDocument, setPanvivaDocument] = useState({
     id: null,
@@ -52,6 +51,7 @@ const Document = () => {
     const panvivaDocumentData = await documentResponse.json();
     const containers = await containerResponse.json();
     const relationships = await relationshipsResponse.json();
+
     setPanvivaDocument({
       ...panvivaDocument,
       document: panvivaDocumentData,
@@ -82,6 +82,23 @@ const Document = () => {
     return { __html: htmlObject.innerHTML };
   };
 
+  const getSubSections = (children) => {
+    let containers = [];
+
+    try {
+      for (var key in children) {
+        containers.push(
+          panvivaDocument?.containers?.find(
+            (container) => container.id === children[key]
+          )
+        );
+      }
+    } catch (error) {
+      console.error(`Error fetching sub-sections`, error);
+    }
+    return containers;
+  };
+
   // display params on a web page
   return (
     <div>
@@ -90,39 +107,25 @@ const Document = () => {
       </div>
 
       <div className={panvivaDocument.loading ? "d-none" : "d-block"}>
-        <h1>{panvivaDocument?.document?.name} </h1>
-        <p className="lead">
-          {panvivaDocument?.document?.description} #
-          {panvivaDocument?.document?.id}
-        </p>
-        <p className="text-right">
-          Last edited on{" "}
-          <Moment format="dddd, MMM Do YYYY, h:mm:ss a zz">
-            {panvivaDocument?.document?.updatedDate}
-          </Moment>
-        </p>
-        <div className="text-right">
-          <Input
-            type="checkbox"
-            checked={isDebugEnabled}
-            onClick={() => setDebugEnabledStatus(!isDebugEnabled)}
-          />{" "}
-          debug
+        <h1 className="display-4">{panvivaDocument?.document?.name}</h1>
+        <hr />
+        <div className="documents">
+          {panvivaDocument?.relationships?.map((relationship) => {
+            return (
+              <React.Fragment key={`section-${relationship.id}`}>
+                <DocumentSection
+                  relationship={relationship}
+                  section={panvivaDocument?.containers?.find(
+                    (container) => container.id === relationship.id
+                  )}
+                  subSecions={getSubSections(relationship?.children)}
+                />
+              </React.Fragment>
+            );
+          })}
         </div>
-        {panvivaDocument?.containers?.map((container) => {
-          return (
-            <section>
-              <h2 id={container.id}>{container.name}</h2>
-              <div dangerouslySetInnerHTML={getHtml(container.body)} />
-            </section>
-          );
-        })}
       </div>
-      <pre className={isDebugEnabled ? "d-block" : "d-none"}>
-        {JSON.stringify(panvivaDocument, null, 4)}
-      </pre>
+      <pre>{JSON.stringify(panvivaDocument, null, 4)}</pre>
     </div>
   );
 };
-
-export default Document;
