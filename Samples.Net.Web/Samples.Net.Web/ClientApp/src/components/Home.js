@@ -15,7 +15,7 @@ export const Home = () => {
       >
         <SearchBar
           handleInputChange={(e) => {
-            setSearchQuery(e.target.value);
+            setSearchQuery(e?.target?.value);
           }}
           executeSearch={() => {
             let query = searchQuery || "*";
