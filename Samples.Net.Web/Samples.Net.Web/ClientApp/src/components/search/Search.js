@@ -39,7 +39,6 @@ export const Search = () => {
         let errorMessage = JSON.stringify(error);
         let path = `/error/unknown/${errorMessage}`;
         console.error(errorMessage);
-        console.error(errorMessage);
         history.push(path);
       }
     };
