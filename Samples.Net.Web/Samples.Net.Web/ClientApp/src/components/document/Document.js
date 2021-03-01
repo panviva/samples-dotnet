@@ -36,11 +36,12 @@ export const Document = () => {
   useEffect(() => {
     // Get Document
     const getDocument = async (id) => {
-      const documentResponse = await fetch(`/api/panviva/document/${id}`);
-      const containerResponse = await fetch(`/api/panviva/containers/${id}`);
-      const relationshipsResponse = await fetch(
-        `/api/panviva/container/relationships/${id}`
-      );
+      const documentUrl = `/api/panviva/document/${id}`;
+      const containerUrl = `/api/panviva/containers/${id}`;
+      const relationshipsUrl = `/api/panviva/container/relationships/${id}`;
+      const documentResponse = await fetch(documentUrl);
+      const containerResponse = await fetch(containerUrl);
+      const relationshipsResponse = await fetch(relationshipsUrl);
 
       const panvivaDocumentData = await documentResponse.json();
       const containers = await containerResponse.json();
@@ -53,13 +54,19 @@ export const Document = () => {
       ) {
         let errorMessages = [];
         if (panvivaDocumentData.message) {
-          errorMessages.push(panvivaDocumentData?.message);
+          errorMessages.push(
+            `Got the following error when requesting ${documentUrl}. \n${panvivaDocumentData?.message}`
+          );
         }
         if (containers.message) {
-          errorMessages.push(containers?.message);
+          errorMessages.push(
+            `Got the following error when requesting ${containerUrl}. \n${containers?.message}`
+          );
         }
         if (relationships.message) {
-          errorMessages.push(relationships?.message);
+          errorMessages.push(
+            `Got the following error when requesting ${relationshipsUrl}. \n${relationships?.message}`
+          );
         }
 
         setPanvivaDocument({
@@ -133,7 +140,7 @@ export const Document = () => {
       <div
         className={panvivaDocument?.errors?.length > 0 ? "d-block" : "d-none"}
       >
-        {panvivaDocument?.errors?.forEach((error) => {
+        {panvivaDocument?.errors?.map((error) => {
           return <div className="alert alert-danger">{error}</div>;
         })}
       </div>

@@ -39,15 +39,15 @@ export const SearchResultsListItem = (props) => {
               <div className="d-flex w-100 justify-content-start">
                 <div className="p-1">
                   <JournalRichtext
-                    className={item.type != "document" ? "hidden" : "block"}
+                    className={item.type !== "document" ? "hidden" : "block"}
                     size={50}
                   />
                   <FileEarmarkText
-                    className={item.type != "file" ? "hidden" : "block"}
+                    className={item.type !== "file" ? "hidden" : "block"}
                     size={50}
                   />
                   <Folder
-                    className={item.type != "folder" ? "hidden" : "block"}
+                    className={item.type !== "folder" ? "hidden" : "block"}
                     size={50}
                   />
                 </div>
