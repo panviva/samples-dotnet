@@ -1,112 +1,149 @@
 import React, { useState, useEffect } from "react";
-import { useParams } from "react-router-dom";
-import { Spinner } from "reactstrap";
+import { useParams, useHistory } from "react-router-dom";
+import { ProgressBar } from "react-bootstrap";
 import { DocumentSection } from "./DocumentSection";
 
 export const Document = () => {
-  // Set document placeholder
+  const [history] = useState(useHistory());
+  const [params] = useState(useParams());
+  const [loading, setLoading] = useState(true);
+  const [requestedDocument, setRequestedDocument] = useState();
   const [panvivaDocument, setPanvivaDocument] = useState({
     id: null,
-    loading: true,
     document: null,
     containers: null,
     relationships: null,
+    errors: [],
   });
-  // Retrieve params into a variable
-  const [params, setParams] = useState(useParams());
 
-  // Set Params
   useEffect(() => {
-    setPanvivaDocument({
-      ...panvivaDocument,
-      id: params.id,
-    });
+    const scrollToHash = (hash) => {
+      var element = document.querySelector(
+        `[data-link-id="${hash.replace("#", "")}"]`
+      );
+      if (element) {
+        element.scrollIntoView({
+          behavior: "smooth",
+          block: "start",
+        });
+      }
+    };
+    if (history.location.hash && !loading) {
+      scrollToHash(history.location.hash);
+    }
+  }, [history.location.hash, loading]);
+
+  useEffect(() => {
+    // Get Document
+    const getDocument = async (id) => {
+      const documentResponse = await fetch(`/api/panviva/document/${id}`);
+      const containerResponse = await fetch(`/api/panviva/containers/${id}`);
+      const relationshipsResponse = await fetch(
+        `/api/panviva/container/relationships/${id}`
+      );
+
+      const panvivaDocumentData = await documentResponse.json();
+      const containers = await containerResponse.json();
+      const relationships = await relationshipsResponse.json();
+
+      if (
+        documentResponse.status !== 200 ||
+        containerResponse.status !== 200 ||
+        relationshipsResponse.status !== 200
+      ) {
+        let errorMessages = [];
+        if (panvivaDocumentData.message) {
+          errorMessages.push(panvivaDocumentData?.message);
+        }
+        if (containers.message) {
+          errorMessages.push(containers?.message);
+        }
+        if (relationships.message) {
+          errorMessages.push(relationships?.message);
+        }
+
+        setPanvivaDocument({
+          id: requestedDocument,
+          errors: errorMessages,
+        });
+        setLoading(false);
+      } else {
+        setPanvivaDocument({
+          id: requestedDocument,
+          document: panvivaDocumentData,
+          containers: containers?.containers,
+          relationships: relationships?.relationships,
+          errors: [],
+        });
+        setLoading(false);
+      }
+    };
+
+    if (requestedDocument) {
+      window.scrollTo(0, 0);
+      setLoading(true);
+      getDocument(requestedDocument);
+    }
+  }, [requestedDocument]);
+
+  useEffect(() => {
+    if (params?.id) {
+      setRequestedDocument(params.id);
+    }
   }, [params]);
 
-  // Fetch document content
   useEffect(() => {
-    // Set document title
-    //document.title = "Document id ...";
-
-    // todo: check if id is null ??
-    if (panvivaDocument && panvivaDocument.id) {
-      getDocument(panvivaDocument.id);
+    if (
+      history.location.pathname &&
+      history.location.pathname.indexOf("/document") !== -1
+    ) {
+      var documentId = history.location.pathname.replace("/document/", "");
+      setRequestedDocument(documentId);
     }
-  }, [panvivaDocument.id]);
+  }, [history.location.pathname]);
 
   // Fetch document content
   useEffect(() => {
     // Set document title
-    document.title = panvivaDocument.loading
+    document.title = loading
       ? "Panviva - Loading ..."
       : `Panviva - ${panvivaDocument?.document?.name} [#${panvivaDocument?.document?.id}]`;
-  }, [panvivaDocument.document]);
-
-  const getDocument = async (id) => {
-    const documentResponse = await fetch(`/api/panviva/document/${id}`);
-    const containerResponse = await fetch(`/api/panviva/containers/${id}`);
-    const relationshipsResponse = await fetch(
-      `/api/panviva/container/relationships/${id}`
-    );
-    const panvivaDocumentData = await documentResponse.json();
-    const containers = await containerResponse.json();
-    const relationships = await relationshipsResponse.json();
-
-    setPanvivaDocument({
-      ...panvivaDocument,
-      document: panvivaDocumentData,
-      containers: containers?.containers,
-      relationships: relationships?.relationships,
-      loading: false,
-    });
-  };
-
-  // Todo: Cleanup code
-  const getHtml = (body) => {
-    var htmlObject = document.createElement("div");
-    htmlObject.innerHTML = body;
-    for (
-      let element = 0;
-      element < htmlObject?.getElementsByTagName("img").length;
-      element++
-    ) {
-      debugger;
-      let imageId = htmlObject
-        ?.getElementsByTagName("img")
-        [element]?.getAttribute("data-image-id");
-      htmlObject
-        .getElementsByTagName("img")
-        [element].setAttribute("src", `api/panviva/image/${imageId}`);
-    }
-
-    return { __html: htmlObject.innerHTML };
-  };
+  }, [panvivaDocument, loading]);
 
   const getSubSections = (children) => {
     let containers = [];
 
-    try {
-      for (var key in children) {
+    if (children) {
+      children.forEach((item) => {
         containers.push(
           panvivaDocument?.containers?.find(
-            (container) => container.id === children[key]
+            (container) => container.id === item
           )
         );
-      }
-    } catch (error) {
-      console.error(`Error fetching sub-sections`, error);
+      });
     }
     return containers;
   };
 
-  // display params on a web page
   return (
-    <div>
-      <div className={panvivaDocument.loading ? "d-block" : "d-none"}>
-        <Spinner style={{ width: "3rem", height: "3rem" }} />
+    <div data-bs-spy="scroll">
+      <div className={loading ? "d-block" : "d-none"}>
+        <ProgressBar animated now={100} label="loading ..." variant="primary" />
       </div>
-
-      <div className={panvivaDocument.loading ? "d-none" : "d-block"}>
+      <div
+        className={panvivaDocument?.errors?.length > 0 ? "d-block" : "d-none"}
+      >
+        {panvivaDocument?.errors?.forEach((error) => {
+          return <div className="alert alert-danger">{error}</div>;
+        })}
+      </div>
+      <div
+        className={
+          !loading && panvivaDocument?.errors?.length === 0
+            ? "d-block"
+            : "d-none"
+        }
+      >
         <h1 className="display-4">{panvivaDocument?.document?.name}</h1>
         <hr />
         <div className="documents">
@@ -125,7 +162,6 @@ export const Document = () => {
           })}
         </div>
       </div>
-      <pre>{JSON.stringify(panvivaDocument, null, 4)}</pre>
     </div>
   );
 };
