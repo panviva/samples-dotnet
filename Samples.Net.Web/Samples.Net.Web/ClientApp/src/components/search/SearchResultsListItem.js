@@ -1,4 +1,5 @@
 import React from "react";
+import { useHistory } from "react-router-dom";
 import { ListGroup } from "react-bootstrap";
 import Moment from "react-moment";
 import {
@@ -8,6 +9,7 @@ import {
 } from "react-bootstrap-icons";
 
 export const SearchResultsListItem = (props) => {
+  const history = useHistory();
   const getDocumentUrl = (item) => {
     if (item.type === "document") {
       return item && item.id ? `/document/${item.id}` : "#";
@@ -37,7 +39,7 @@ export const SearchResultsListItem = (props) => {
             <ListGroup.Item
               className="pl-2 m-2 search-results-list-item"
               action
-              href={getDocumentUrl(item)}
+              onClick={() => history.push(getDocumentUrl(item))}
             >
               <div className="d-flex w-100 justify-content-start">
                 <div className="p-1">

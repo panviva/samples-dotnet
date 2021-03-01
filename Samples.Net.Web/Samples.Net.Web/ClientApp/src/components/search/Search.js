@@ -21,39 +21,39 @@ export const Search = () => {
 
   // lookup content
   useEffect(() => {
+    const searchContent = async (query) => {
+      const url = `/api/panviva/search/${query || "*"}`;
+      try {
+        const response = await fetch(url);
+        const data = await response.json();
+        if (response.status !== 200) {
+          let errorMessage = `${data.message}`;
+          let path = `/error/${response.status}/${errorMessage}`;
+          console.error(errorMessage);
+          history.push(path);
+        } else {
+          setSearchResults(data);
+        }
+        setLoading(false);
+      } catch (error) {
+        let errorMessage = JSON.stringify(error);
+        let path = `/error/unknown/${errorMessage}`;
+        console.error(errorMessage);
+        console.error(errorMessage);
+        history.push(path);
+      }
+    };
+
     setLoading(true);
+
     if (searchQuery !== "") {
       searchContent(searchQuery);
-      setTitle(`Panviva - Search results for ${params.query}`);
+      setTitle(`Panviva - Search results for ${searchQuery}`);
     } else {
       searchContent();
       setTitle(`Panviva - Search everything!`);
     }
-  }, [searchQuery]);
-
-  // Run panviva search
-  const searchContent = async (query) => {
-    const url = `/api/panviva/search/${query || "*"}`;
-    try {
-      const response = await fetch(url);
-      const data = await response.json();
-      if (response.status !== 200) {
-        let errorMessage = `${data.message}`;
-        let path = `/error/${response.status}/${errorMessage}`;
-        console.error(errorMessage);
-        history.push(path);
-      } else {
-        setSearchResults(data);
-      }
-      setLoading(false);
-    } catch (error) {
-      let errorMessage = JSON.stringify(error);
-      let path = `/error/unknown/${errorMessage}`;
-      console.error(errorMessage);
-      console.error(errorMessage);
-      history.push(path);
-    }
-  };
+  }, [searchQuery, history]);
 
   return (
     <>
