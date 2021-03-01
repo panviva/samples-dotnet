@@ -1,3 +1,11 @@
+/* Page Layout */
+.fixed-top {
+  position: fixed;
+  top: 0;
+  right: 0;
+  left: 0;
+}
+
 /* Provide sufficient contrast against white background */
 a {
   color: #0366d6;
@@ -68,10 +76,6 @@ div.documents {
   text-transform: uppercase;
   font-weight: 700;
   margin-top: 5px;
-}
-
-.documents .pv-task-header{
-  display: none;
 }
 
 .documents p.pv-bullet,
@@ -292,3 +296,5 @@ td.pv-quicklinks-cell {
   text-align: center;
   padding-top: 20px;
 }
+
+
