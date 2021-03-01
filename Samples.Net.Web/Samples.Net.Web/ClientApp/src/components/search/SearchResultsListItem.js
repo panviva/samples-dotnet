@@ -22,12 +22,7 @@ export const SearchResultsListItem = (props) => {
   };
 
   const getFirstDocumentUrl = () => {
-    if (
-      props &&
-      props.searchResults &&
-      props.searchResults.results &&
-      props.searchResults.results.length > 0
-    ) {
+    if (props?.searchResults?.results?.length > 0) {
       return getDocumentUrl(props.searchResults.results[0]);
     }
   };
