@@ -3,7 +3,6 @@ import { SearchResultsHeading } from "./SearchResultsHeading";
 import { SearchResultsList } from "./SearchResultsList";
 
 export const SearchResults = (props) => {
-  //isLoading
   return (
     <div className="p-1">
       <SearchResultsHeading
