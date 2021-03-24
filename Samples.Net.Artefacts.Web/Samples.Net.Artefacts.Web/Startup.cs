@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.SpaServices.ReactDevelopmentServer;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Panviva.Sdk.Services.Core.Extensions.V3;
 
 namespace Samples.Net.Artefacts.Web
 {
@@ -28,6 +29,8 @@ namespace Samples.Net.Artefacts.Web
             {
                 configuration.RootPath = "ClientApp/build";
             });
+
+            services.AddPanvivaApis();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
