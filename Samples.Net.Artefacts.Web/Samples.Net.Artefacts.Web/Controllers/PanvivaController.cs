@@ -48,6 +48,31 @@ namespace Samples.Net.Artefacts.Web.Controllers
         }
 
         [HttpGet]
+        [Route("category")]
+        public async Task<IActionResult> CategoriesAsync([FromQuery] GetArtefactCategoryQueryModel queryModel)
+        {
+            GetArtefactCategoryResultModel resultModel;
+            try
+            {
+                resultModel = await _queryHandler.HandleAsync(queryModel);
+            }
+            catch (QueryModelException ex)
+            {
+                // When Query model validation fails.
+                _logger.LogError(ex.Message, ex);
+                throw;
+            }
+            catch (FailedApiRequestException ex)
+            {
+                // When Panviva API results in a error.
+                _logger.LogError(ex.Message, ex);
+                throw;
+            }
+
+            return Ok(resultModel);
+        }
+
+        [HttpGet]
         [Route("artefact/{id}")]
         public async Task<IActionResult> ArtefactAsync([FromRoute] GetArtefactQueryModel queryModel)
         {
