@@ -1,11 +1,13 @@
-import React, { useState, useEffect } from "react";
-import { useHistory, useParams } from "react-router-dom";
-import { ButtonGroup, ToggleButton} from 'react-bootstrap'
+import React, { useState, useEffect, useRef } from "react";
+import { useHistory, useParams, useLocation } from "react-router-dom";
+import { ButtonGroup, ToggleButton } from "react-bootstrap";
 import { SearchBar } from "./SearchBar";
 import { SearchResults } from "./SearchResults";
 
 export const Search = () => {
+  const isInitialMount = useRef(true);
   const history = useHistory();
+  const location = useLocation();
   const [params] = useState(useParams());
   const [title, setTitle] = useState("");
   const [pendingQuery, setPendingQuery] = useState("");
@@ -13,13 +15,13 @@ export const Search = () => {
     params && params.query !== "" ? params.query : "*"
   );
 
-  // const [pendingFilter, setPendingFilter] = useState("");
-  // const [searchFilter, setSearchFilter] = useState(
-  //   params && params.query !== "" ? params.query : "*"
-  // ); 
+  const [pendingCategory, setPendingCategory] = useState("");
+  const [category, setCategory] = useState(
+    new URLSearchParams(location.search).get("category")
+  );
+
   const [searchResults, setSearchResults] = useState({});
   const [isLoading, setLoading] = useState(true);
-  const [category, setCategory] = useState(null);
   const [categories, setCategories] = useState([]);
 
   // update the document title
@@ -27,12 +29,20 @@ export const Search = () => {
     document.title = title;
   }, [title]);
 
+  useEffect(() => {
+    if (isInitialMount.current) {
+      isInitialMount.current = false;
+    } else {
+      executeSearch();
+    }
+  }, [pendingCategory]);
+
   // // fetch categories on load
   // useEffect(() => {
   //   try {
   //     const url = '/api/panviva/categories';
   //     const response = await fetch(url);
-  //     setCategories(response.categories); 
+  //     setCategories(response.categories);
   //   } catch (error) {
   //       let errorMessage = JSON.stringify(error);
   //       let path = `/error/unknown/${errorMessage}`;
@@ -46,7 +56,7 @@ export const Search = () => {
   //   try {
   //     const url = '/api/panviva/categories';
   //     const response = await fetch(url);
-  //     setCategories(response.categories); 
+  //     setCategories(response.categories);
   //   } catch (error) {
   //       let errorMessage = JSON.stringify(error);
   //       let path = `/error/unknown/${errorMessage}`;
@@ -58,7 +68,12 @@ export const Search = () => {
   // lookup content
   useEffect(() => {
     const searchContent = async (query) => {
-      const url = `/api/panviva/search?advancedQuery=${query || "*"}&facet=category/name`;
+      const url = `/api/panviva/search?advancedQuery=${
+        query || "*"
+      }&facet=category/name&filter=${
+        category ? `category/name eq '${category}'` : ``
+      }`;
+
       try {
         const response = await fetch(url);
         const data = await response.json();
@@ -96,33 +111,35 @@ export const Search = () => {
     // maybe do this via history ..?
     let query = pendingQuery || "*";
     // let filter = pendingFilter || "";
-    let path = `/search/${query}`;
+    let path = `/search/${query}?category=${pendingCategory}`;
     history.push(path);
     setSearchQuery(pendingQuery);
+    setCategory(pendingCategory);
   };
 
   return (
     <>
       <div className="d-flex align-content-center flex-wrap">
-      { categories?.length > 0 && 
-      <ButtonGroup toggle>
-        {categories.map((radio, idx) => {
-          console.log(radio);
-          return (
-            <ToggleButton
-              key={idx}
-              type="radio"
-              //variant="secondary"
-              name="radio"
-              value={`${radio.key} (${radio.value})`}
-              //checked={category === radio.categoryName}
-              onChange={(e) => setCategory(e.currentTarget.value)}
-            >
-              {radio.name}
-            </ToggleButton>
-          );
-        })}
-      </ButtonGroup>} 
+        {categories?.length > 0 && (
+          <ButtonGroup toggle>
+            {categories.map((radio, idx) => {
+              //console.log(radio);
+              return (
+                <ToggleButton
+                  key={idx}
+                  type="radio"
+                  variant="secondary"
+                  name="radio"
+                  value={radio.key}
+                  checked={category === radio.key}
+                  onChange={(e) => setPendingCategory(e.currentTarget.value)}
+                >
+                  {`${radio.key} (${radio.value})`}
+                </ToggleButton>
+              );
+            })}
+          </ButtonGroup>
+        )}
 
         <SearchBar
           handleInputChange={(e) => {
