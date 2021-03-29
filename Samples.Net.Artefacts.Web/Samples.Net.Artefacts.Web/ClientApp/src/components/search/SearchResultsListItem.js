@@ -1,17 +1,18 @@
-import React from "react";
-import { useHistory } from "react-router-dom";
-import { ListGroup } from "react-bootstrap";
+import React from 'react';
+import { useHistory } from 'react-router-dom';
+import { ListGroup, Card, Button, Badge } from 'react-bootstrap';
 import {
   JournalRichtext,
   FileEarmarkText,
   Folder,
-} from "react-bootstrap-icons";
+  Clipboard,
+} from 'react-bootstrap-icons';
 import dayjs from 'dayjs';
 import relativeTime from 'dayjs/plugin/relativeTime';
 dayjs.extend(relativeTime);
 
 export const SearchResultsListItem = (props) => {
-  console.log("my props", props);
+  console.log('my props', props);
   const history = useHistory();
   // const getDocumentUrl = (item) => {
   //   if (item.type === "document") {
@@ -29,11 +30,50 @@ export const SearchResultsListItem = (props) => {
   //     return getDocumentUrl(props.searchResults.results[0]);
   //   }
   // };
-  
+
   return (
     //<ListGroup variant="flush" defaultActiveKey={getFirstDocumentUrl()}>
     <ListGroup variant="flush" defaultActiveKey={1}>
       {props.searchResults?.results?.map((item) => {
+        const simpleContent = item.content
+          .filter((section) => section.mediaType === 'text/plain')
+          .map((section) => section.text)
+          .join(' ')
+          .trim();
+
+        const metaDataBlock = (
+          <>
+            {Object.keys(item.metaData)
+              .filter((metaDatumName) => {
+                return item.metaData[metaDatumName].value;
+              })
+              .map((metaDatumName) => {
+                return (
+                  <>
+                    {item.metaData[metaDatumName].value.map(
+                      (metaDatumValue) => (
+                        <Button variant="info" style={{ margin: '5px' }}>
+                          #{metaDatumValue} <Badge variant="light">9</Badge>
+                        </Button>
+                      )
+                    )}
+                  </>
+                );
+              })}
+          </>
+        );
+
+        //console.log('block is', metaDataBlock);
+
+        const isLongAnswer = simpleContent.length > 50;
+        const cardTitle = isLongAnswer
+          ? simpleContent.slice(0, 49).trim().concat('...')
+          : simpleContent;
+        const cardText = isLongAnswer
+          ? '...'.concat(simpleContent.slice(49).trim())
+          : '';
+        const cardSubtitle = item.primaryQuery;
+
         return (
           <React.Fragment key={item.id}>
             <ListGroup.Item
@@ -41,12 +81,9 @@ export const SearchResultsListItem = (props) => {
               action
               //onClick={() => history.push(getDocumentUrl(item))}
             >
-              <div className="d-flex w-100 justify-content-start">
+              {/* <div className="d-flex w-100 justify-content-start">
                 <div className="p-1">
-                  <JournalRichtext
-                    className={"block"}
-                    size={50}
-                  />
+                  <Clipboard className={'block'} size={25} />
                 </div>
 
                 <div className="pl-2">
@@ -58,7 +95,16 @@ export const SearchResultsListItem = (props) => {
                     {dayjs(item?.updatedDate).fromNow()}
                   </p>
                 </div>
-              </div>
+              </div> */}
+              <Card>
+                <Card.Body>
+                  <Card.Title>{cardTitle}</Card.Title>
+                  <Card.Text>{cardText}</Card.Text>
+                  <Card.Subtitle>{cardSubtitle}</Card.Subtitle>
+                  <br />
+                  {metaDataBlock}
+                </Card.Body>
+              </Card>
             </ListGroup.Item>
           </React.Fragment>
         );
