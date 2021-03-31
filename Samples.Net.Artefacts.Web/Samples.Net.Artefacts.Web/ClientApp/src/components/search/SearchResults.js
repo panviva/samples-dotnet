@@ -1,6 +1,6 @@
-import React from "react";
-import { SearchResultsHeading } from "./SearchResultsHeading";
-import { SearchResultsList } from "./SearchResultsList";
+import React from 'react';
+import { SearchResultsHeading } from './SearchResultsHeading';
+import { SearchResultsList } from './SearchResultsList';
 
 export const SearchResults = (props) => {
   return (
@@ -13,6 +13,7 @@ export const SearchResults = (props) => {
         searchResults={props.searchResults}
         searchQuery={props.searchQuery}
         isLoading={props.isLoading}
+        onMetaDataAdd={props.onMetaDataAdd}
       />
     </div>
   );

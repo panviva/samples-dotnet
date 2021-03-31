@@ -1,6 +1,6 @@
-import React from "react";
-import { Button, InputGroup, FormControl } from "react-bootstrap";
-import { Search } from "react-bootstrap-icons";
+import React from 'react';
+import { Button, InputGroup, FormControl } from 'react-bootstrap';
+import { Search } from 'react-bootstrap-icons';
 
 export const SearchBar = (props) => {
   return (
@@ -10,13 +10,13 @@ export const SearchBar = (props) => {
         style={{
           borderWidth: 0,
           borderRadius: 0,
-          borderBottomWidth: "1px",
+          borderBottomWidth: '1px',
         }}
         placeholder="What're you searching for?"
         aria-label="Query"
         onChange={props.handleInputChange}
         onKeyDown={(event) => {
-          if (event.key === "Enter") {
+          if (event.key === 'Enter') {
             setTimeout(() => {
               props.executeSearch();
             }, 250);
@@ -32,6 +32,9 @@ export const SearchBar = (props) => {
       >
         <Search />
       </Button>
+      <Button className="m-2" variant="outline-primary" onClick={props.clear}>
+        Clear
+      </Button>{' '}
     </InputGroup>
   );
 };

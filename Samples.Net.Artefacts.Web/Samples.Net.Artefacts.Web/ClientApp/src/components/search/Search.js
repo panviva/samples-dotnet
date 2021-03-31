@@ -2,7 +2,22 @@ import React, { useState, useEffect, useRef } from 'react';
 import { useHistory, useParams, useLocation } from 'react-router-dom';
 import { ButtonGroup, ToggleButton, Badge } from 'react-bootstrap';
 import { SearchBar } from './SearchBar';
+import { SearchFilter } from './SearchFilter';
 import { SearchResults } from './SearchResults';
+
+const initFilterStateFromQueryString = (windowLocation) => {
+  const searchParams = new URLSearchParams(windowLocation.search);
+  const queryMetadataArray = searchParams.getAll('metaData');
+  return (
+    queryMetadataArray?.reduce((metaDataObj, metaDataStr, idx) => {
+      const [metaDataKey, metaDataValuesStr] = metaDataStr.split(':');
+      const metaDataValues = metaDataValuesStr.split(',');
+
+      metaDataObj[metaDataKey] = metaDataValues;
+      return metaDataObj;
+    }, {}) ?? {}
+  );
+};
 
 export const Search = () => {
   const isInitialMount = useRef(true);
@@ -11,50 +26,108 @@ export const Search = () => {
   const [params] = useState(useParams());
   const [title, setTitle] = useState('');
   const [pendingQuery, setPendingQuery] = useState('');
+
+  console.log(params.query);
   const [searchQuery, setSearchQuery] = useState(
     params && params.query !== '' ? params.query : '*'
   );
-
-  const [pendingCategory, setPendingCategory] = useState('');
-  const [category, setCategory] = useState(
-    new URLSearchParams(location.search).get('category')
+  const [metaData, setMetaData] = useState(
+    initFilterStateFromQueryString(location)
   );
+
+  // const [pendingCategory, setPendingCategory] = useState('');
+  // const [category, setCategory] = useState(
+  //   new URLSearchParams(location.search).get('category')
+  // );
 
   const [searchResults, setSearchResults] = useState({});
   const [isLoading, setLoading] = useState(true);
-  const [categories, setCategories] = useState([]);
-  const [fullCategories, setFullCategories] = useState([]);
+  // const [categories, setCategories] = useState([]);
+  // const [fullCategories, setFullCategories] = useState([]);
+
+  const clear = () => {
+    history.push('/');
+  };
+
+  const generateAPIQueryStringFromFilterState = () => {
+    return Object.keys(metaData).reduce((filterStr, key) => {
+      if (!metaData[key]) {
+        return '';
+      }
+      if (filterStr) {
+        return filterStr.concat(
+          ` and metaData/${key}/values/any(val: search.in(val, '${metaData[
+            key
+          ].join(', ')}'))`
+        );
+      } else {
+        return `&filter=metaData/${key}/values/any(val: search.in(val, '${metaData[
+          key
+        ].join(', ')}'))`;
+      }
+    }, '');
+  };
+
+  const generateQueryStringFromFilterState = () => {
+    console.log(metaData, 'metadata is');
+    return Object.keys(metaData).reduce((filterStr, key) => {
+      return (filterStr ?? '').concat(
+        metaData[key]?.length > 0
+          ? `${filterStr ? '&' : '?'}metaData=${key}:${metaData[key].join(',')}`
+          : ''
+      );
+    }, '');
+  };
+
+  const executeSearch = () => {
+    // maybe do this via history ..?
+    let query = pendingQuery || searchQuery || '*';
+    // let filter = pendingFilter || "";
+    let path = `/search/${query}${generateQueryStringFromFilterState()}`;
+    console.log(path);
+    history.push(path);
+    setSearchQuery(pendingQuery);
+  };
 
   // update the document title
   useEffect(() => {
     document.title = title;
   }, [title]);
 
+  //refresh on metaData changes
   useEffect(() => {
     if (isInitialMount.current) {
       isInitialMount.current = false;
     } else {
       executeSearch();
     }
-  }, [pendingCategory]);
+  }, [metaData, history.push]);
+
+  // useEffect(() => {
+  //   if (isInitialMount.current) {
+  //     isInitialMount.current = false;
+  //   } else {
+  //     executeSearch();
+  //   }
+  // }, [pendingCategory]);
 
   // fetch categories on load
-  useEffect(() => {
-    const fetchCategories = async () => {
-      try {
-        const url = '/api/panviva/category';
-        const response = await fetch(url);
-        const data = await response.json();
-        setFullCategories(data.categories);
-      } catch (error) {
-        let errorMessage = JSON.stringify(error);
-        let path = `/error/unknown/${errorMessage}`;
-        console.error(errorMessage);
-        history.push(path);
-      }
-    };
-    fetchCategories();
-  }, [setFullCategories]);
+  // useEffect(() => {
+  //   const fetchCategories = async () => {
+  //     try {
+  //       const url = '/api/panviva/category';
+  //       const response = await fetch(url);
+  //       const data = await response.json();
+  //       setFullCategories(data.categories);
+  //     } catch (error) {
+  //       let errorMessage = JSON.stringify(error);
+  //       let path = `/error/unknown/${errorMessage}`;
+  //       console.error(errorMessage);
+  //       history.push(path);
+  //     }
+  //   };
+  //   fetchCategories();
+  // }, [setFullCategories]);
 
   // // update filter on category select
   // useEffect(() => {
@@ -75,9 +148,7 @@ export const Search = () => {
     const searchContent = async (query) => {
       const url = `/api/panviva/search?advancedQuery=${
         query || '*'
-      }&facet=category/name&filter=${
-        category ? `category/name eq '${category}'` : ``
-      }`;
+      }${generateAPIQueryStringFromFilterState()}`;
 
       try {
         const response = await fetch(url);
@@ -90,7 +161,7 @@ export const Search = () => {
           history.push(path);
         } else {
           setSearchResults(data);
-          setCategories(data.facets[0].groups);
+          //setCategories(data.facets[0].groups);
         }
         setLoading(false);
       } catch (error) {
@@ -112,16 +183,6 @@ export const Search = () => {
     }
   }, [searchQuery, history]);
 
-  const executeSearch = () => {
-    // maybe do this via history ..?
-    let query = pendingQuery || '*';
-    // let filter = pendingFilter || "";
-    let path = `/search/${query}?category=${pendingCategory}`;
-    history.push(path);
-    setSearchQuery(pendingQuery);
-    setCategory(pendingCategory);
-  };
-
   return (
     <>
       <div className="d-flex align-content-center flex-wrap">
@@ -131,52 +192,41 @@ export const Search = () => {
           }}
           executeSearch={executeSearch}
           initalValue={searchQuery}
+          clear={clear}
         />
-        {/* {categories?.length > 0 && (
-          <ButtonGroup toggle>
-            {categories.map((radio, idx) => {
-              //console.log(radio);
-              return (
-                <ToggleButton
-                  key={idx}
-                  type="radio"
-                  variant="secondary"
-                  name="radio"
-                  value={radio.key}
-                  checked={category === radio.key}
-                  onChange={(e) => setPendingCategory(e.currentTarget.value)}
-                >
-                  {`${radio.key} (${radio.value})`}
-                </ToggleButton>
-              );
-            })}
-          </ButtonGroup>
-        )} */}
-        {/* {fullCategories?.length > 0 && (
-          <ButtonGroup toggle>
-            {fullCategories.map((radio, idx) => {
-              //console.log(radio);
-              return (
-                <ToggleButton
-                  key={idx}
-                  type="radio"
-                  variant="secondary"
-                  name="radio"
-                  value={radio.key}
-                  checked={category === radio.key}
-                  onChange={(e) => setPendingCategory(e.currentTarget.value)}
-                >
-                  {`${radio.key} (${radio.value})`}
-                </ToggleButton>
-              );
-            })}
-          </ButtonGroup>
-        )} */}
+      </div>
+      <div className="d-flex align-content-center flex-wrap">
+        {metaData && (
+          <SearchFilter
+            metaData={metaData}
+            onMetaDataDelete={(key, name) => {
+              setMetaData({
+                ...metaData,
+                [key]: metaData[key].filter((value) => value !== name),
+              });
+            }}
+          />
+        )}
       </div>
       <SearchResults
         searchResults={searchResults}
         searchQuery={searchQuery}
         isLoading={isLoading}
+        onMetaDataAdd={(key, name) => {
+          if (metaData[key]) {
+            setMetaData({
+              ...metaData,
+              [key]: metaData[key].some((val) => val === name)
+                ? metaData[key]
+                : [...metaData[key], name],
+            });
+          } else {
+            setMetaData({
+              ...metaData,
+              [key]: [name],
+            });
+          }
+        }}
       />
     </>
   );

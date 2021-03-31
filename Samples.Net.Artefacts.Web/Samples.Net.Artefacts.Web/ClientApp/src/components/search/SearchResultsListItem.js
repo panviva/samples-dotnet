@@ -12,8 +12,9 @@ import relativeTime from 'dayjs/plugin/relativeTime';
 dayjs.extend(relativeTime);
 
 export const SearchResultsListItem = (props) => {
-  console.log('my props', props);
+  console.log('my props list item', props);
   const history = useHistory();
+  const { onMetaDataAdd } = props;
   // const getDocumentUrl = (item) => {
   //   if (item.type === "document") {
   //     return item && item.id ? `/document/${item.id}` : "#";
@@ -52,8 +53,14 @@ export const SearchResultsListItem = (props) => {
                   <>
                     {item.metaData[metaDatumName].value.map(
                       (metaDatumValue) => (
-                        <Button variant="info" style={{ margin: '5px' }}>
-                          #{metaDatumValue} <Badge variant="light">9</Badge>
+                        <Button
+                          variant="secondary"
+                          style={{ margin: '5px' }}
+                          onClick={() =>
+                            onMetaDataAdd(metaDatumName, metaDatumValue)
+                          }
+                        >
+                          #{metaDatumValue}
                         </Button>
                       )
                     )}
