@@ -39,8 +39,8 @@ export const Search = () => {
     history.push('/');
   };
 
-  const generateAPIQueryStringFromFilterState = () => {
-    return Object.keys(metaData).reduce((filterStr, key) => {
+  const generateAPIQueryStringFromFilterState = () =>
+    Object.keys(metaData).reduce((filterStr, key) => {
       if (!metaData[key]) {
         return '';
       }
@@ -56,21 +56,19 @@ export const Search = () => {
         ].join(', ')}'))`;
       }
     }, '');
-  };
 
-  const generateQueryStringFromFilterState = (newMetaData) => {
-    console.log(newMetaData, 'new is');
-
-    return Object.keys(newMetaData).reduce((filterStr, key) => {
-      return (filterStr ?? '').concat(
-        newMetaData[key]?.length > 0
-          ? `${filterStr ? '&' : '?'}metaData=${key}:${newMetaData[key].join(
-              ','
-            )}`
-          : ''
-      );
-    }, '');
-  };
+  const generateQueryStringFromFilterState = (newMetaData) =>
+    Object.keys(newMetaData).reduce(
+      (filterStr, key) =>
+        (filterStr ?? '').concat(
+          newMetaData[key]?.length > 0
+            ? `${filterStr ? '&' : '?'}metaData=${key}:${newMetaData[key].join(
+                ','
+              )}`
+            : ''
+        ),
+      ''
+    );
 
   const executeSearch = (newMetaData) => {
     let query = pendingQuery || searchQuery || '*';
