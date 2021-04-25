@@ -1,6 +1,5 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useHistory, useParams, useLocation } from 'react-router-dom';
-import { ButtonGroup, ToggleButton, Badge } from 'react-bootstrap';
 import { SearchBar } from './SearchBar';
 import { SearchFilter } from './SearchFilter';
 import { SearchResults } from './SearchResults';
@@ -20,30 +19,21 @@ const initFilterStateFromQueryString = (windowLocation) => {
 };
 
 export const Search = () => {
-  const isInitialMount = useRef(true);
   const history = useHistory();
   const location = useLocation();
   const [params] = useState(useParams());
   const [title, setTitle] = useState('');
-  const [pendingQuery, setPendingQuery] = useState('');
-
-  console.log(params.query);
-  const [searchQuery, setSearchQuery] = useState(
+  const [pendingQuery, setPendingQuery] = useState(
     params && params.query !== '' ? params.query : '*'
   );
-  const [metaData, setMetaData] = useState(
-    initFilterStateFromQueryString(location)
-  );
 
-  // const [pendingCategory, setPendingCategory] = useState('');
-  // const [category, setCategory] = useState(
-  //   new URLSearchParams(location.search).get('category')
-  // );
+  const [searchQuery] = useState(
+    params && params.query !== '' ? params.query : '*'
+  );
+  const [metaData] = useState(initFilterStateFromQueryString(location));
 
   const [searchResults, setSearchResults] = useState({});
   const [isLoading, setLoading] = useState(true);
-  // const [categories, setCategories] = useState([]);
-  // const [fullCategories, setFullCategories] = useState([]);
 
   const clear = () => {
     history.push('/');
@@ -68,80 +58,33 @@ export const Search = () => {
     }, '');
   };
 
-  const generateQueryStringFromFilterState = () => {
-    console.log(metaData, 'metadata is');
-    return Object.keys(metaData).reduce((filterStr, key) => {
+  const generateQueryStringFromFilterState = (newMetaData) => {
+    console.log(newMetaData, 'new is');
+
+    return Object.keys(newMetaData).reduce((filterStr, key) => {
       return (filterStr ?? '').concat(
-        metaData[key]?.length > 0
-          ? `${filterStr ? '&' : '?'}metaData=${key}:${metaData[key].join(',')}`
+        newMetaData[key]?.length > 0
+          ? `${filterStr ? '&' : '?'}metaData=${key}:${newMetaData[key].join(
+              ','
+            )}`
           : ''
       );
     }, '');
   };
 
-  const executeSearch = () => {
-    // maybe do this via history ..?
+  const executeSearch = (newMetaData) => {
     let query = pendingQuery || searchQuery || '*';
-    // let filter = pendingFilter || "";
-    let path = `/search/${query}${generateQueryStringFromFilterState()}`;
-    console.log(path);
+    let path = `/search/${query}${generateQueryStringFromFilterState(
+      newMetaData
+    )}`;
+
     history.push(path);
-    setSearchQuery(pendingQuery);
   };
 
   // update the document title
   useEffect(() => {
     document.title = title;
   }, [title]);
-
-  //refresh on metaData changes
-  useEffect(() => {
-    if (isInitialMount.current) {
-      isInitialMount.current = false;
-    } else {
-      executeSearch();
-    }
-  }, [metaData, history.push]);
-
-  // useEffect(() => {
-  //   if (isInitialMount.current) {
-  //     isInitialMount.current = false;
-  //   } else {
-  //     executeSearch();
-  //   }
-  // }, [pendingCategory]);
-
-  // fetch categories on load
-  // useEffect(() => {
-  //   const fetchCategories = async () => {
-  //     try {
-  //       const url = '/api/panviva/category';
-  //       const response = await fetch(url);
-  //       const data = await response.json();
-  //       setFullCategories(data.categories);
-  //     } catch (error) {
-  //       let errorMessage = JSON.stringify(error);
-  //       let path = `/error/unknown/${errorMessage}`;
-  //       console.error(errorMessage);
-  //       history.push(path);
-  //     }
-  //   };
-  //   fetchCategories();
-  // }, [setFullCategories]);
-
-  // // update filter on category select
-  // useEffect(() => {
-  //   try {
-  //     const url = '/api/panviva/categories';
-  //     const response = await fetch(url);
-  //     setCategories(response.categories);
-  //   } catch (error) {
-  //       let errorMessage = JSON.stringify(error);
-  //       let path = `/error/unknown/${errorMessage}`;
-  //       console.error(errorMessage);
-  //       history.push(path);
-  //     }
-  // }, [setCategories]);
 
   // lookup content
   useEffect(() => {
@@ -153,7 +96,7 @@ export const Search = () => {
       try {
         const response = await fetch(url);
         const data = await response.json();
-        console.log(data);
+
         if (response.status !== 200) {
           let errorMessage = `${data.message}`;
           let path = `/error/${response.status}/${errorMessage}`;
@@ -161,8 +104,8 @@ export const Search = () => {
           history.push(path);
         } else {
           setSearchResults(data);
-          //setCategories(data.facets[0].groups);
         }
+
         setLoading(false);
       } catch (error) {
         let errorMessage = JSON.stringify(error);
@@ -181,7 +124,7 @@ export const Search = () => {
       searchContent();
       setTitle(`Panviva - Search everything!`);
     }
-  }, [searchQuery, history]);
+  }, [searchQuery, metaData, history]);
 
   return (
     <>
@@ -200,7 +143,7 @@ export const Search = () => {
           <SearchFilter
             metaData={metaData}
             onMetaDataDelete={(key, name) => {
-              setMetaData({
+              executeSearch({
                 ...metaData,
                 [key]: metaData[key].filter((value) => value !== name),
               });
@@ -214,14 +157,14 @@ export const Search = () => {
         isLoading={isLoading}
         onMetaDataAdd={(key, name) => {
           if (metaData[key]) {
-            setMetaData({
+            executeSearch({
               ...metaData,
               [key]: metaData[key].some((val) => val === name)
                 ? metaData[key]
                 : [...metaData[key], name],
             });
           } else {
-            setMetaData({
+            executeSearch({
               ...metaData,
               [key]: [name],
             });
