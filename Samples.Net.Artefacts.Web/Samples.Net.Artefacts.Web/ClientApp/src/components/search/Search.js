@@ -70,9 +70,9 @@ export const Search = () => {
       ''
     );
 
-  const executeSearch = (newMetaData) => {
-    let query = pendingQuery || searchQuery || '*';
-    let path = `/search/${query}${generateQueryStringFromFilterState(
+  const executeSearch = (newMetaData = metaData) => {
+    const query = pendingQuery || searchQuery || '*';
+    const path = `/search/${query}${generateQueryStringFromFilterState(
       newMetaData
     )}`;
 
@@ -96,8 +96,8 @@ export const Search = () => {
         const data = await response.json();
 
         if (response.status !== 200) {
-          let errorMessage = `${data.message}`;
-          let path = `/error/${response.status}/${errorMessage}`;
+          const errorMessage = `${data.message}`;
+          const path = `/error/${response.status}/${errorMessage}`;
           console.error(errorMessage);
           history.push(path);
         } else {
@@ -106,8 +106,8 @@ export const Search = () => {
 
         setLoading(false);
       } catch (error) {
-        let errorMessage = JSON.stringify(error);
-        let path = `/error/unknown/${errorMessage}`;
+        const errorMessage = JSON.stringify(error);
+        const path = `/error/unknown/${errorMessage}`;
         console.error(errorMessage);
         history.push(path);
       }
@@ -131,7 +131,7 @@ export const Search = () => {
           handleInputChange={(e) => {
             setPendingQuery(e.target.value);
           }}
-          executeSearch={executeSearch}
+          executeSearch={() => executeSearch()}
           initalValue={searchQuery}
           clear={clear}
         />
