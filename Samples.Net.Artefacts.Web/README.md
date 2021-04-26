@@ -1,6 +1,6 @@
-# Samples.Net.Web
+# Samples.Net.Artefacts.Web
 
-A simple `.Net 5` and `React` Web Application that allows you to search and display panviva documents.
+A simple `.Net 5` and `React` Web Application that allows you to search and display panviva artefacts.
 
 Following Endpoints are exposed via APIs.
 
