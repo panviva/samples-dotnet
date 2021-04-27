@@ -48,12 +48,12 @@ export const Search = () => {
         return filterStr.concat(
           ` and metaData/${key}/values/any(val: search.in(val, '${metaData[
             key
-          ].join(', ')}'))`
+          ].join(',')}', ','))`
         );
       } else {
         return `&filter=metaData/${key}/values/any(val: search.in(val, '${metaData[
           key
-        ].join(', ')}'))`;
+        ].join(',')}', ','))`;
       }
     }, '');
 
