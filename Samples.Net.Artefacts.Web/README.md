@@ -5,7 +5,7 @@ A simple `.Net 5` and `React` Web Application that allows you to search and disp
 Following Endpoints are exposed via APIs.
 
 - `GET Search Artefacts`
-- `GET Image`
+- `GET Artefact`
 
 ## Prerequisites
 
@@ -29,12 +29,14 @@ dotnet run
 
 You should be able to interact with the application at [https://localhost:25001/](https://localhost:25001/)
 
-![Panviva Home Page](documentation/home-page.png)
+### Searching for content
 
-![Panviva Search Results Loading](documentation/search-results-loading.png)
+![Panviva Home Page](documentation/home-page.gif)
 
-![Panviva Search Results](documentation/search-results.png)
+### Filter content
 
-![Panviva Document](documentation/document.png)
+![Panviva Search Results Loading](documentation/filter-content.gif)
 
-> Note: You can check the debug button to view json payloads on the webpage.
+### Copy to clipboard
+
+![Panviva Search Results](documentation/copy-clipboard.gif)
