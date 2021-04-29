@@ -1,0 +1,30 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.31112.23
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Samples.Net.Artefacts.Web", "Samples.Net.Artefacts.Web\Samples.Net.Artefacts.Web.csproj", "{CE4FEFCD-E5D9-454E-8356-9198F2E70EA8}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{23B6D87F-AD92-492B-BB5E-28852B34A7E4}"
+	ProjectSection(SolutionItems) = preProject
+		README.md = README.md
+	EndProjectSection
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{CE4FEFCD-E5D9-454E-8356-9198F2E70EA8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CE4FEFCD-E5D9-454E-8356-9198F2E70EA8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CE4FEFCD-E5D9-454E-8356-9198F2E70EA8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CE4FEFCD-E5D9-454E-8356-9198F2E70EA8}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {7E535387-05B0-460F-8C7D-D1B21B2DCCCF}
+	EndGlobalSection
+EndGlobal
