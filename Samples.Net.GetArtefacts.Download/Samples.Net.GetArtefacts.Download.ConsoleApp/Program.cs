@@ -3,11 +3,12 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Threading.Tasks;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
+using Panviva.Sdk.Models.V3.Get;
 using Panviva.Sdk.Services.Core.Domain.QueryModels.V3;
 using Panviva.Sdk.Services.Core.Extensions.V3;
 using Panviva.Sdk.Services.Core.Handlers.V3;
@@ -27,7 +28,7 @@ namespace Samples.Net.GetArtefacts.Download.ConsoleApp
 
 
 
-        private static void Main(string[] args)
+        private static async Task Main(string[] args)
         {
             // In this region we setup manual Dependency Injection and Host Build for Panviva .Net Sdk
             #region SetupDI
@@ -36,30 +37,39 @@ namespace Samples.Net.GetArtefacts.Download.ConsoleApp
             BuildConfig(builder);
 
             var host = Host.CreateDefaultBuilder()
-                .ConfigureServices((context, services) => { services.AddPanvivaApis(); })
+                .ConfigureServices((context, services) => 
+                { 
+                    services.AddPanvivaApis();
+                    services.AddScoped<QueryHandler>();
+                })
                 .Build();
 
-            var queryHandler = ActivatorUtilities.CreateInstance<QueryHandler>(host.Services);
+            using var serviceScope = host.Services.CreateScope();
+            var queryHandler = serviceScope.ServiceProvider.GetRequiredService<QueryHandler>();
+
             #endregion
 
             // Create output folder
             CreateOutputFolder();
 
-            // Build a list of all Artefacts
-            GetArtefactList(queryHandler);
+            // Build a list of all Artefact IDs
+            await GetArtefactListAsync(queryHandler);
 
             // Get individual artefact
-            GetArtefacts(queryHandler);
+            await foreach(var artefact in GetArtefactsAsync(queryHandler))
+            {
+                await WriteArtefactToFile(artefact);
+            }
         }
 
         // Create and print the outut folder
         // Note: Ouput is written to {home folder}/get-artefacts/run-id/
         private static void CreateOutputFolder()
         {
-            var _homeFolder = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
-            var _appName = "get-artefacts";
-            var _runId = $"run-{DateTime.Now.ToString("yyyy-dd-M--HH-mm-ss")}";
-            _outputPath = Path.Combine(_homeFolder, _appName, _runId);
+            var homeFolder = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
+            var appName = "get-artefacts";
+            var runId = $"run-{DateTime.Now:yyyy-dd-M--HH-mm-ss}";
+            _outputPath = Path.Combine(homeFolder, appName, runId);
 
             try
             {
@@ -73,51 +83,8 @@ namespace Samples.Net.GetArtefacts.Download.ConsoleApp
             }
         }
 
-        // Traverse artefacts & fetch individually
-        private static void GetArtefacts(QueryHandler queryHandler)
-        { 
-            _artefactList.ToList().ForEach(a =>
-            {
-                GetIndividualArtefact(queryHandler, a);
-            });
-        }
-
-        // Get artefact payoad
-        private static void GetIndividualArtefact(QueryHandler queryHandler, string id)
-        {
-            var queryModel = new GetArtefactQueryModel
-            {
-                Id = id
-            };
-
-            var searchResult = queryHandler.HandleAsync(queryModel).Result;
-
-            WriteArtefactToFile(searchResult);
-        }
-
-        // Write artefact to a json file within output folder
-        // Note: Filename is {Artefact Id}.json
-        private static void WriteArtefactToFile(Panviva.Sdk.Models.V3.Get.GetArtefactResultModel searchResult)
-        {
-            var path = Path.Combine(_outputPath, $"{searchResult.Id}.json");
-
-            try
-            {
-                // Save artefact as json file
-                var json = JsonConvert.SerializeObject(searchResult, Formatting.Indented);
-                System.IO.File.WriteAllText(path, json);
-                _outputList.Add(searchResult.Id.ToString());
-                System.Console.WriteLine($"- Created {_outputList.Count} of {_artefactList.Count} - '{searchResult.Id.ToString()}.json'");
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine($"Exception occurred when writing '{path}' : {e.Message}");
-            }
-            
-        }
-
-        // Generate a list of all arefacts using NLS
-        private static void GetArtefactList(QueryHandler queryHandler)
+        // Generate a list of all arefact IDs using NLS
+        private static async Task GetArtefactListAsync(QueryHandler queryHandler)
         {
             var queryModel = new GetSearchArtefactsQueryModel
             {
@@ -127,18 +94,55 @@ namespace Samples.Net.GetArtefacts.Download.ConsoleApp
 
             try
             {
-                var searchResult = queryHandler.HandleAsync(queryModel).Result;
-
-                searchResult.Results.ToList().ForEach(r =>
-                {
-                    _artefactList.Add(r.Id.ToString());
-                });
+                var searchResult = await queryHandler.HandleAsync(queryModel);
+                _artefactList.AddRange(searchResult.Results.Select(result => result.Id.ToString()));
             }
             catch (Exception e)
             {
                 Console.WriteLine($"Exception occurred when calling Panviva APIs : {e.Message}");
                 throw;
             }
+        }
+
+        // Traverse artefacts & fetch individually
+        private static async IAsyncEnumerable<GetArtefactResultModel> GetArtefactsAsync(QueryHandler queryHandler)
+        { 
+            foreach (var artefactId in _artefactList)
+            {
+                yield return await GetIndividualArtefactAsync(queryHandler, artefactId);
+            }
+        }
+
+        // Get artefact payload
+        private static async Task<GetArtefactResultModel> GetIndividualArtefactAsync(QueryHandler queryHandler, string id)
+        {
+            var queryModel = new GetArtefactQueryModel
+            {
+                Id = id
+            };
+
+            return await queryHandler.HandleAsync(queryModel);
+        }
+
+        // Write artefact to a json file within output folder
+        // Note: Filename is {Artefact Id}.json
+        private static async Task WriteArtefactToFile(GetArtefactResultModel artefact)
+        {
+            var path = Path.Combine(_outputPath, $"{artefact.Id}.json");
+
+            try
+            {
+                // Save artefact as json file
+                var json = JsonConvert.SerializeObject(artefact, Formatting.Indented);
+                await File.WriteAllTextAsync(path, json);
+                _outputList.Add(artefact.Id.ToString());
+                Console.WriteLine($"- Created {_outputList.Count} of {_artefactList.Count} - '{artefact.Id}.json'");
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine($"Exception occurred when writing '{path}' : {e.Message}");
+            }
+            
         }
 
         private static void BuildConfig(IConfigurationBuilder builder)
