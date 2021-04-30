@@ -12,7 +12,7 @@ using Panviva.Sdk.Services.Core.Domain.QueryModels.V3;
 using Panviva.Sdk.Services.Core.Extensions.V3;
 using Panviva.Sdk.Services.Core.Handlers.V3;
 
-namespace Samples.NetCore.GetArtefacts.Download.ConsoleApp
+namespace Samples.Net.GetArtefacts.Download.ConsoleApp
 {
     public class Program
     {

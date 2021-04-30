@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.808.10
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Samples.NetCore.GetArtefacts.Download.ConsoleApp", "Samples.NetCore.GetArtefacts.Download.ConsoleApp\Samples.NetCore.GetArtefacts.Download.ConsoleApp.csproj", "{89E53F3A-4D7D-4A1B-A98B-580833D5B81E}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Samples.Net.GetArtefacts.Download.ConsoleApp", "Samples.Net.GetArtefacts.Download.ConsoleApp\Samples.Net.GetArtefacts.Download.ConsoleApp.csproj", "{89E53F3A-4D7D-4A1B-A98B-580833D5B81E}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
