@@ -26,8 +26,7 @@ namespace Samples.Net.GetArtefacts.Download.ConsoleApp
         // Store the path where the output files will be written
         private static string _outputPath;
 
-
-
+        // Application entry point
         private static async Task Main(string[] args)
         {
             // In this region we setup manual Dependency Injection and Host Build for Panviva .Net Sdk
