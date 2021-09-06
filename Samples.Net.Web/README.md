@@ -44,4 +44,6 @@ You should be able to interact with the application at [https://localhost:25001/
 
 ![Panviva Document](documentation/document.png)
 
+![Panviva Document Share](documentation/push-to-user.gif)
+
 > Note: You can check the debug button to view json payloads on the webpage.

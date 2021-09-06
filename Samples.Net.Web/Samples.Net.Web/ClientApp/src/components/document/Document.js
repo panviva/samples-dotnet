@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useParams, useHistory } from "react-router-dom";
 import { ProgressBar } from "react-bootstrap";
 import { DocumentSection } from "./DocumentSection";
+import { DocumentShare } from "./DocumentShare";
 
 export const Document = () => {
   const [history] = useState(useHistory());
@@ -151,8 +152,13 @@ export const Document = () => {
             : "d-none"
         }
       >
-        <h1 className="display-4">{panvivaDocument?.document?.name}</h1>
+        <h1 className="display-4">
+          {panvivaDocument?.document?.name}
+        </h1>
         <hr />
+        <div className="p-1">
+          <DocumentShare id={panvivaDocument.id} />
+        </div>
         <div className="documents">
           {panvivaDocument?.relationships?.map((relationship) => {
             return (
