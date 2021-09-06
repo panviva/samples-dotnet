@@ -12,7 +12,7 @@ a {
 }
 
 code {
-  color: #E01A76;
+  color: #e01a76;
 }
 
 .btn-primary {
@@ -29,17 +29,15 @@ code {
   display: none !important;
 }
 
-.search-results-list-item:hover{
+.search-results-list-item:hover {
   padding-left: 20px !important;
   border-color: #c21b6e;
   margin-left: 10px !important;
 }
 
-
 div.documents {
-  font-family: 'Raleway', sans-serif;  
+  font-family: "Raleway", sans-serif;
 }
-
 
 .documents p.pv-paragraph {
   color: #555454;
@@ -63,10 +61,10 @@ div.documents {
   font-size: 1.2em;
   line-height: 1.4em;
   margin-top: 10px;
-  
+
   padding-bottom: 0px;
   border-bottom: 0px;
-  margin-bottom: 0px
+  margin-bottom: 0px;
 }
 
 .documents p.pv-sub-header {
@@ -126,19 +124,31 @@ div.documents {
   margin: 0;
 }
 
-.documents table[cell_alignment=Fixed] {
+.documents table[cell_alignment="Fixed"] {
   table-layout: fixed;
 }
 
-.documents .pv-table .pv-table-row .pv-table-cell .pv-paragraph[data-align='right'] {
+.documents
+  .pv-table
+  .pv-table-row
+  .pv-table-cell
+  .pv-paragraph[data-align="right"] {
   text-align: right;
 }
 
-.documents .pv-table .pv-table-row .pv-table-cell .pv-paragraph[data-align='left'] {
+.documents
+  .pv-table
+  .pv-table-row
+  .pv-table-cell
+  .pv-paragraph[data-align="left"] {
   text-align: left;
 }
 
-.documents .pv-table .pv-table-row .pv-table-cell .pv-paragraph[data-align='center'] {
+.documents
+  .pv-table
+  .pv-table-row
+  .pv-table-cell
+  .pv-paragraph[data-align="center"] {
   margin: 0px auto;
   text-align: center;
 }
@@ -156,26 +166,26 @@ div.documents {
 /* Table for pv-table*/
 .documents table.pv-table {
   background-color: #efefef;
-  table-layout: fixed;  
+  table-layout: fixed;
 }
 
 .documents table.pv-table tbody {
   border: none !important;
 }
 
-.documents table.pv-table tr.pv-table-row[data-header='true'] {
+.documents table.pv-table tr.pv-table-row[data-header="true"] {
   background-color: #e9e9e9;
   font-weight: 700;
-  color: #000; 
+  color: #000;
 }
 
-.documents table.pv-table tr.pv-table-row[data-header='true'] .pv-table-cell {
+.documents table.pv-table tr.pv-table-row[data-header="true"] .pv-table-cell {
   background-color: #e9e9e9;
   font-weight: 700;
-  color: #000; 
+  color: #000;
 }
 
-.documents table.pv-table tr.pv-table-row[data-header='true'] p {
+.documents table.pv-table tr.pv-table-row[data-header="true"] p {
   color: #fff;
 }
 
@@ -184,7 +194,9 @@ div.documents {
   line-height: 1.5em;
 }
 
-.documents table.pv-table tr.pv-table-row[data-header='true'][data-hidden='true'] {
+.documents
+  table.pv-table
+  tr.pv-table-row[data-header="true"][data-hidden="true"] {
   display: none;
 }
 
@@ -196,8 +208,8 @@ td.pv-quicklinks-cell {
   border: none !important;
 }
 
-.pv-quicklinks-container>.pv-quicklinks-image,
-.pv-quicklinks-container>.pv-quicklinks-label {
+.pv-quicklinks-container > .pv-quicklinks-image,
+.pv-quicklinks-container > .pv-quicklinks-label {
   float: left;
   clear: left;
 }
@@ -220,25 +232,25 @@ td.pv-quicklinks-cell {
 }
 
 /*icons in taskes*/
-.documents div.pv-task-details>p.pv-who {
+.documents div.pv-task-details > p.pv-who {
   border: 1px solid #cacaca;
   background-color: #efefef;
   padding-left: 5px;
 }
 
-.documents div.pv-task-details>p.pv-menupath {
+.documents div.pv-task-details > p.pv-menupath {
   border: 1px solid #cacaca;
   background-color: #f7f6f6;
   padding-left: 5px;
 }
 
-.documents div.pv-task-details>p.pv-shortcut {
+.documents div.pv-task-details > p.pv-shortcut {
   border: 1px solid #cacaca;
   background-color: #efefef;
   padding-left: 5px;
 }
 
-.documents div.pv-task-details>p.pv-trans {
+.documents div.pv-task-details > p.pv-trans {
   border: 1px solid #cacaca;
   background-color: #f7f6f6;
   padding-left: 5px;
@@ -297,4 +309,18 @@ td.pv-quicklinks-cell {
   padding-top: 20px;
 }
 
+input[type="text"],
+select.form-control {
+  background: transparent;
+  border: none;
+  border-bottom: 1px solid #000000;
+  -webkit-box-shadow: none;
+  box-shadow: none;
+  border-radius: 0;
+}
 
+input[type="text"]:focus,
+select.form-control:focus {
+  -webkit-box-shadow: none;
+  box-shadow: none;
+}
